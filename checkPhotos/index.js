@@ -21,7 +21,7 @@ exports.handler = async (event) => {
   const images = photos.map((x, i) => {
     const [_filename, extension] = x.filename.split(".");
     const updatedFilename = `${date.toFormat("yyyy-MM-dd")}/${i+1}.${extension}`;
-    return { url: `${x.baseUrl}=w512-h256-d`, filename: updatedFilename, contentType: x.mimeType }
+    return { url: `${x.baseUrl}=w1024-h512-d`, filename: updatedFilename, contentType: x.mimeType }
   });
 
   console.log(images);
