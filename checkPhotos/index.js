@@ -30,10 +30,7 @@ exports.handler = async (event) => {
   const image = images.length ? images[0] : null;
 
   if (!image) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ url: null }),
-    };
+    return { url: null }
   }
 
   const uploadPhotosParams = {
