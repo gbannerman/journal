@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "build": "zip -r journal-checkPhotos.zip ."
   },
   "author": "",
   "license": "ISC",
