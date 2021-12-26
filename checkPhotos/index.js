@@ -1,7 +1,7 @@
 const { Lambda } = require("@aws-sdk/client-lambda");
-const { DateTime } = require('luxon');
-const { getAccessToken } = require('./auth');
-const { searchPhotos } = require('./photos');
+const { DateTime } = require("luxon");
+const { getAccessToken } = require("./auth");
+const { searchPhotos } = require("./photos");
 
 exports.handler = async (event) => {
   const { date: dateString } = event;
@@ -20,18 +20,24 @@ exports.handler = async (event) => {
 
   const images = photos.map((x, i) => {
     const [_filename, extension] = x.filename.split(".");
-    const updatedFilename = `${date.toFormat("yyyy-MM-dd")}/${i+1}.${extension}`;
-    return { url: `${x.baseUrl}=w1024-h512-d`, filename: updatedFilename, contentType: x.mimeType }
+    const updatedFilename = `${date.toFormat("yyyy-MM-dd")}/${
+      i + 1
+    }.${extension}`;
+    return {
+      url: `${x.baseUrl}=w1024-h512-d`,
+      filename: updatedFilename,
+      contentType: x.mimeType,
+    };
   });
 
   console.log(images);
 
-  // TODO: Handle multiple images
-  const image = images.length ? images[0] : null;
-
-  if (!image) {
-    return { url: null }
+  if (!images.length) {
+    return { url: null };
   }
+
+  // TODO: Handle multiple images
+  const image = images[(images.length * Math.random()) | 0];
 
   const uploadPhotosParams = {
     FunctionName: "upload_photos",
