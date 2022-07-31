@@ -1,6 +1,5 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const { updateDatabaseWithDiaryEntries } = require('./import');
-
+const { updateDatabaseWithDiaryEntries } = require("./import");
 
 updateDatabaseWithDiaryEntries();
