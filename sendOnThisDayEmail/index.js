@@ -31,13 +31,9 @@ const buildEmailBody = (entries) => {
   };
 
   const buildEntry = (entry) => {
-    return `<table align="center" border="0" width="640" cellpadding="0" cellspacing="0" class="container" style="width: 640px;"><tr><td><table class="container" align="left" border="0" width="400" cellpadding="0" cellspacing="0" style="width: 400px;"><tr><td class="article-button" style="padding: 20px 0 20px 30px;"><table align="left" border="0" width="125" cellpadding="0" cellspacing="0" style="width: 125px; text-align: center;"><tr><td style="border: 2px solid #000000; padding: 8px;"> <span style="text-decoration: none; color: #000000; font-weight: bold; font-family: 'Noto sans', sans-serif; text-transform: uppercase; font-size: 14px;">${formatYearsAgo(
+    return `<table align="center" border="0" width="640" cellpadding="0" cellspacing="0" class="container" style="width: 640px;"><tr><td><table class="container" align="left" border="0" width="400" cellpadding="0" cellspacing="0" style="width: 400px;"><tr><td class="article-button" style="padding: 20px 0 20px 30px;"><table align="left" border="0" width="125" cellpadding="0" cellspacing="0" style="width: 125px; text-align: center;"><tr><td style="border: 2px solid #000000; padding: 8px;"> <div style="text-decoration: none; color: #000000; font-weight: bold; font-family: 'Noto sans', sans-serif; text-transform: uppercase; font-size: 14px;">${formatYearsAgo(
       entry.yearsAgo
-    )}</span><img style="margin-top: 10px" alt="${
-      entry.country
-    } flag" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/${
-      entry.country
-    }.svg"/></td></tr></table></td></tr><tr><td class="article-title" style="padding: 0 0 15px 30px; font-size: 22px; font-weight: bold; text-align: left; font-family: 'Noto sans';"><span style="color: #000000; text-decoration: none;">${
+    )}</div><img style="margin-top: 10px" alt="${entry.country.toLowerCase()} flag" src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/png250px/${entry.country.toLowerCase()}.png"/></td></tr></table></td></tr><tr><td class="article-title" style="padding: 0 0 15px 30px; font-size: 22px; font-weight: bold; text-align: left; font-family: 'Noto sans';"><span style="color: #000000; text-decoration: none;">${
       entry.tripName
     }</span></td></tr><tr><td class="article-content" style="padding: 0 0 20px 30px; text-align: justify; line-height: 22px;">${
       entry.content
