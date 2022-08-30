@@ -6,7 +6,7 @@ const searchPhotos = async (accessToken, date) => {
   const { data } = await axios.post(
     "https://photoslibrary.googleapis.com/v1/mediaItems:search",
     {
-      pageSize: 1,
+      pageSize: 100,
       filters: {
         dateFilter: {
           dates: [
