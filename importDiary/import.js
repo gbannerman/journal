@@ -57,12 +57,16 @@ const addEntriesToDatabase = async (diary) => {
   });
 };
 
-const updateDatabaseWithDiaryEntries = async () => {
+const readAndFormatDiary = async () => {
   const diary = await readDiary();
-  const formattedDiary = formatDiary(diary);
+  return formatDiary(diary);
+};
+
+const updateDatabaseWithDiaryEntries = async (formattedDiary) => {
   await addEntriesToDatabase(formattedDiary);
 };
 
 module.exports = {
+  readAndFormatDiary,
   updateDatabaseWithDiaryEntries,
 };

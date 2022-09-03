@@ -1,5 +1,16 @@
 require("dotenv").config();
 
-const { updateDatabaseWithDiaryEntries } = require("./import");
+const {
+  updateDatabaseWithDiaryEntries,
+  readAndFormatDiary,
+} = require("./import");
+const { uploadVisualisation } = require("./visualise");
 
-updateDatabaseWithDiaryEntries();
+const main = async () => {
+  const formattedDiary = await readAndFormatDiary();
+
+  updateDatabaseWithDiaryEntries(formattedDiary);
+  uploadVisualisation(formattedDiary);
+};
+
+main();
