@@ -49,5 +49,7 @@ exports.handler = async (event) => {
 
   const result = JSON.parse(Buffer.from(Payload));
 
+  console.info(result);
+
   return { url: result.s3Url };
 };
