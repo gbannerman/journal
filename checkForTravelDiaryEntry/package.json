@@ -11,9 +11,9 @@
   "author": "@gbannerman",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.17.0",
-    "@aws-sdk/client-lambda": "3.17.0",
-    "@aws-sdk/lib-dynamodb": "3.17.0",
-    "luxon": "1.27.0"
+    "@aws-sdk/client-dynamodb": "3.398.0",
+    "@aws-sdk/client-lambda": "3.398.0",
+    "@aws-sdk/lib-dynamodb": "3.398.0",
+    "luxon": "3.4.2"
   }
 }

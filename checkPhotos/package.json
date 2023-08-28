@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-lambda": "3.17.0",
-    "axios": "0.21.1",
-    "luxon": "1.27.0"
+    "@aws-sdk/client-lambda": "3.398.0",
+    "axios": "1.5.0",
+    "luxon": "3.4.2"
   }
 }

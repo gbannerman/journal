@@ -10,12 +10,12 @@
   "author": "@gbannerman",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.17.0",
-    "@aws-sdk/lib-dynamodb": "3.17.0",
-    "@aws-sdk/client-s3": "3.163.0",
-    "dotenv": "10.0.0",
-    "front-matter": "^4.0.2",
-    "luxon": "1.27.0",
-    "showdown": "^2.1.0"
+    "@aws-sdk/client-dynamodb": "3.398.0",
+    "@aws-sdk/lib-dynamodb": "3.398.0",
+    "@aws-sdk/client-s3": "3.400.0",
+    "dotenv": "16.3.1",
+    "front-matter": "4.0.2",
+    "luxon": "3.4.2",
+    "showdown": "2.1.0"
   }
 }
