@@ -1,4 +1,4 @@
-const fs = require("fs");
+const { DateTime } = require("luxon");
 const { uploadFile } = require("./s3");
 
 const getVisualisationHtml = (data) =>
@@ -26,7 +26,7 @@ const getCalendarData = (formattedDiary) => {
     const [month, day] = dayOfYear.split("-");
     return [
       new Date(
-        2022,
+        DateTime.now().year,
         Number.parseInt(month) - 1,
         Number.parseInt(day)
       ).toISOString(),

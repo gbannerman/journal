@@ -37,7 +37,10 @@ function formatDiary(diary) {
 }
 
 function formatDiaryEntry({ body, attributes }) {
-  const date = DateTime.fromISO(attributes.date);
+  const date =
+    attributes.date instanceof Date
+      ? DateTime.fromJSDate(attributes.date)
+      : DateTime.fromISO(attributes.date);
 
   const converter = new showdown.Converter({ strikethrough: true });
   const content = converter.makeHtml(body);
