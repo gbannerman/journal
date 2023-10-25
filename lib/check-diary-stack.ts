@@ -1,8 +1,9 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as events from "aws-cdk-lib/aws-events";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
@@ -11,9 +12,14 @@ export class CheckDiaryEntry extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const table = new dynamodb.TableV2(this, "travelDiary", {
+      partitionKey: { name: "day", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "year", type: dynamodb.AttributeType.NUMBER },
+      deletionProtection: true,
+    });
+
     const fn = new lambda.NodejsFunction(this, "checkForTravelDiaryEntry", {
       runtime: Runtime.NODEJS_18_X,
-      functionName: "checkForTravelDiaryEntry-cdk",
       handler: "handler",
       entry: path.join(
         __dirname,
@@ -41,7 +47,7 @@ export class CheckDiaryEntry extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ["dynamodb:Query"],
         effect: iam.Effect.ALLOW,
-        resources: ["*"],
+        resources: [table.tableArn],
       })
     );
 
