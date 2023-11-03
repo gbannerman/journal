@@ -2,13 +2,13 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
-import * as events from "aws-cdk-lib/aws-events";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 
 export class CheckDiary extends Construct {
+  fn: lambda.NodejsFunction;
+
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
@@ -18,7 +18,7 @@ export class CheckDiary extends Construct {
       deletionProtection: true,
     });
 
-    const fn = new lambda.NodejsFunction(this, "checkForTravelDiaryEntry", {
+    this.fn = new lambda.NodejsFunction(this, "checkForTravelDiaryEntry", {
       runtime: Runtime.NODEJS_18_X,
       handler: "handler",
       entry: path.join(
@@ -26,7 +26,7 @@ export class CheckDiary extends Construct {
         "../lambda/checkForTravelDiaryEntry/index.js"
       ),
       reservedConcurrentExecutions: 1,
-      timeout: cdk.Duration.seconds(15),
+      timeout: cdk.Duration.seconds(3),
       bundling: {
         nodeModules: ["luxon"],
       },
@@ -34,27 +34,24 @@ export class CheckDiary extends Construct {
         __dirname,
         "../lambda/checkForTravelDiaryEntry/package-lock.json"
       ),
+      environment: {
+        ENTRIES_TABLE_NAME: table.tableName,
+      },
     });
 
-    fn.addToRolePolicy(
+    this.fn.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["lambda:InvokeFunction"],
         effect: iam.Effect.ALLOW,
         resources: ["*"],
       })
     );
-    fn.addToRolePolicy(
+    this.fn.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["dynamodb:Query"],
         effect: iam.Effect.ALLOW,
         resources: [table.tableArn],
       })
     );
-
-    const eventRule = new events.Rule(this, "dailyTravelDiaryCheck", {
-      schedule: events.Schedule.cron({ minute: "0", hour: "8" }),
-    });
-
-    eventRule.addTarget(new targets.LambdaFunction(fn));
   }
 }

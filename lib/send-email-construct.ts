@@ -5,19 +5,32 @@ import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 
+interface SendEmailProps {
+  bucketDomainName: string;
+}
+
 export class SendEmail extends Construct {
-  constructor(scope: Construct, id: string) {
+  fn: lambda.NodejsFunction;
+
+  constructor(
+    scope: Construct,
+    id: string,
+    { bucketDomainName }: SendEmailProps
+  ) {
     super(scope, id);
 
-    const fn = new lambda.NodejsFunction(this, "sendEmail", {
+    this.fn = new lambda.NodejsFunction(this, "sendEmail", {
       runtime: Runtime.NODEJS_18_X,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/sendOnThisDayEmail/index.js"),
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(3),
+      environment: {
+        BUCKET_DOMAIN_NAME: bucketDomainName,
+      },
     });
 
-    fn.addToRolePolicy(
+    this.fn.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["ses:SendEmail", "ses:SendRawEmail"],
         effect: iam.Effect.ALLOW,

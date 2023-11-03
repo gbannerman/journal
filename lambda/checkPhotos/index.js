@@ -1,12 +1,9 @@
-const { Lambda } = require("@aws-sdk/client-lambda");
 const { DateTime } = require("luxon");
 const { getAccessToken } = require("./auth");
 const { searchPhotos } = require("./photos");
 
 exports.handler = async (event) => {
   const { date: dateString } = event;
-
-  const lambdaClient = new Lambda({ region: "eu-north-1" });
 
   const accessToken = await getAccessToken(process.env.GOOGLE_REFRESH_TOKEN);
 
@@ -33,23 +30,15 @@ exports.handler = async (event) => {
   console.log(images);
 
   if (!images.length) {
-    return { url: null };
+    return {
+      url: null,
+      filename: null,
+      contentType: null,
+    };
   }
 
   // TODO: Handle multiple images
   const image = images[(images.length * Math.random()) | 0];
 
-  const uploadPhotosParams = {
-    FunctionName: "upload_photos",
-    InvocationType: "RequestResponse",
-    Payload: JSON.stringify(image),
-  };
-
-  const { Payload } = await lambdaClient.invoke(uploadPhotosParams);
-
-  const result = JSON.parse(Buffer.from(Payload));
-
-  console.info(result);
-
-  return { url: result.s3Url };
+  return { ...image };
 };
