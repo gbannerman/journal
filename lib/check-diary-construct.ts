@@ -8,9 +8,9 @@ import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 
-export class CheckDiaryEntry extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+export class CheckDiary extends Construct {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
 
     const table = new dynamodb.TableV2(this, "travelDiary", {
       partitionKey: { name: "day", type: dynamodb.AttributeType.STRING },

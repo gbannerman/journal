@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
-import { CheckDiaryEntry } from "../lib/check-diary-stack";
+import { Journal } from "../lib/journal";
 
 const app = new cdk.App();
-new CheckDiaryEntry(app, "CheckDiaryEntryStack");
+new Journal(app, "Journal");
