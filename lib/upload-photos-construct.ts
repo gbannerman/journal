@@ -28,7 +28,7 @@ export class UploadPhotos extends Construct {
           expiration: cdk.Duration.days(5),
         },
       ],
-      // TODO: Define bucket policy here
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
     });
 
     this.fn = new lambda.Function(this, "uploadPhotos", {
@@ -45,9 +45,16 @@ export class UploadPhotos extends Construct {
 
     this.fn.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ["s3:PutObject", "s3:PutObjectTagging", "s3:PutObjectAcl"], // TODO: Decide if I'll use ACL or not
-        effect: iam.Effect.ALLOW,
-        resources: [this.bucket.bucketArn],
+        actions: ["s3:PutObject", "s3:PutObjectTagging", "s3:PutObjectAcl"],
+        resources: [this.bucket.bucketArn, this.bucket.arnForObjects("*")],
+      })
+    );
+
+    this.bucket.addToResourcePolicy(
+      new iam.PolicyStatement({
+        resources: [this.bucket.arnForObjects("*"), this.bucket.bucketArn],
+        actions: ["s3:PutObject", "s3:PutObjectTagging", "s3:PutObjectAcl"],
+        principals: [this.fn.role!],
       })
     );
   }

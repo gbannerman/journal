@@ -4,7 +4,7 @@ const client = new S3Client({ region: "eu-north-1" });
 
 const uploadFile = async (filename, body) => {
   const command = new PutObjectCommand({
-    Bucket: "lookbak.at-journal-images",
+    Bucket: process.env.PHOTOS_BUCKET_NAME,
     Key: filename,
     Body: body,
     ACL: "public-read",
