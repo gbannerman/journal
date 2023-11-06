@@ -1,17 +1,33 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as Journal from '../lib/journal-stack';
+import * as cdk from "aws-cdk-lib";
+import { Capture, Template } from "aws-cdk-lib/assertions";
+import * as sfn from "aws-cdk-lib/aws-stepfunctions";
+import { JournalStack } from "../lib/journal";
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/journal-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new Journal.JournalStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+describe("Journal stack", () => {
+  let app: cdk.App;
+  let stack: cdk.Stack;
+  let template: Template;
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+  beforeEach(() => {
+    app = new cdk.App();
+    stack = new JournalStack(app, "MyTestStack");
+    template = Template.fromStack(stack);
+  });
+
+  describe("Journal state machine", () => {
+    it("is triggered every day at 8am UTC", () => {
+      const eventRuleTargetCapture = new Capture();
+
+      template.hasResourceProperties("AWS::Events::Rule", {
+        ScheduleExpression: "cron(0 8 * * ? *)",
+        Targets: [{ Arn: { Ref: eventRuleTargetCapture } }],
+      });
+
+      expect(
+        template.findResources("AWS::StepFunctions::StateMachine")[
+          eventRuleTargetCapture.asString()
+        ]
+      ).toBeDefined();
+    });
+  });
 });

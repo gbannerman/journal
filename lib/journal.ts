@@ -9,7 +9,7 @@ import { CheckPhotos } from "./check-photos-construct";
 import { UploadPhotos } from "./upload-photos-construct";
 import { SendEmail } from "./send-email-construct";
 
-export class Journal extends cdk.Stack {
+export class JournalStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
