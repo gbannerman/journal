@@ -46,17 +46,27 @@ function formatDiaryEntry({ body, attributes }) {
   const content = converter.makeHtml(body);
 
   return {
+    date,
     year: parseInt(date.toFormat("yyyy"), 10),
     day: date.toFormat("MM-dd"),
     tripName: attributes.trip,
     country: attributes.country,
     content,
+    rawContent: body,
   };
 }
 
 const addEntriesToDatabase = async (diary) => {
   diary.forEach(async (entry) => {
-    await putItem(entry);
+    const { year, day, tripName, country, content } = entry;
+
+    await putItem({
+      year,
+      day,
+      tripName,
+      country,
+      content,
+    });
   });
 };
 
