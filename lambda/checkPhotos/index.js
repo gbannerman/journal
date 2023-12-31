@@ -15,7 +15,15 @@ exports.handler = async (event) => {
 
   console.log(photos);
 
-  const images = photos.map((x, i) => {
+  if (!photos.length) {
+    return {
+      images: null,
+    };
+  }
+
+  shuffleArray(photos);
+
+  const images = photos.slice(0, 3).map((x, i) => {
     const [_filename, extension] = x.filename.split(".");
     const updatedFilename = `${date.toFormat("yyyy-MM-dd")}/${
       i + 1
@@ -29,16 +37,12 @@ exports.handler = async (event) => {
 
   console.log(images);
 
-  if (!images.length) {
-    return {
-      url: null,
-      filename: null,
-      contentType: null,
-    };
-  }
-
-  // TODO: Handle multiple images
-  const image = images[(images.length * Math.random()) | 0];
-
-  return { ...image };
+  return { images };
 };
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}

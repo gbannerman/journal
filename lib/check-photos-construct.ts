@@ -15,7 +15,7 @@ export class CheckPhotos extends Construct {
       runtime: Runtime.NODEJS_18_X,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/checkPhotos/index.js"),
-      timeout: cdk.Duration.seconds(5),
+      timeout: cdk.Duration.seconds(10),
       bundling: {
         nodeModules: ["axios", "luxon"],
       },

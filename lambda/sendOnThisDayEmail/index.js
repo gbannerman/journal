@@ -27,12 +27,17 @@ const buildEmailBody = (entries, bucketUrl) => {
   const summaryUrl = new URL(bucketUrl);
   summaryUrl.pathname = "/meta/summary.html";
 
-  const buildEntryImage = (entry) => {
-    if (!entry.image?.url) {
+  const buildEntryImages = (entry) => {
+    if (!entry.images?.urls || !entry.images?.urls?.length) {
       return "";
     }
 
-    return `<tr><td class="article-content" style="padding: 0 0 20px 30px; text-align: center;"><img style="width: 100%;" src="${entry.image.url}"/></td></tr>`;
+    return entry.images.urls
+      .map(
+        (url) =>
+          `<tr><td class="article-content" style="padding: 0 0 20px 30px; text-align: center;"><img style="width: 100%;" src="${url}"/></td></tr>`
+      )
+      .join("");
   };
 
   const buildEntry = (entry) => {
@@ -42,7 +47,7 @@ const buildEmailBody = (entries, bucketUrl) => {
       entry.tripName
     }</span></td></tr><tr><td class="article-content" style="padding: 0 0 20px 30px;text-align:justify;line-height:22px;color:#05204a;">${
       entry.content
-    }</td></tr>${buildEntryImage(
+    }</td></tr>${buildEntryImages(
       entry
     )}<tr><td class="article-button" style="padding: 0 0 20px 30px; text-align: center;"><a class="button-link" target="_blank" rel="noreferrer" href="${summaryUrl.toString()}">View Summary</a></td></tr></table></td></tr></table>`;
   };

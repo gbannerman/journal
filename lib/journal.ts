@@ -30,20 +30,18 @@ export class JournalStack extends cdk.Stack {
 
     const checkPhotosTask = new tasks.LambdaInvoke(this, "CheckPhotosTask", {
       lambdaFunction: checkPhotos.fn,
-      resultPath: "$.image",
+      resultPath: "$.images",
       resultSelector: {
-        "url.$": "$.Payload.url",
-        "filename.$": "$.Payload.filename",
-        "contentType.$": "$.Payload.contentType",
+        "images.$": "$.Payload.images",
       },
     });
 
     const uploadPhotosTask = new tasks.LambdaInvoke(this, "UploadPhotosTask", {
       lambdaFunction: uploadPhotos.fn,
-      inputPath: "$.image",
-      resultPath: "$.image",
+      inputPath: "$.images",
+      resultPath: "$.images",
       resultSelector: {
-        "url.$": "$.Payload.url",
+        "urls.$": "$.Payload.urls",
       },
     });
 
@@ -54,7 +52,7 @@ export class JournalStack extends cdk.Stack {
 
     const findAndUploadPhotos = checkPhotosTask.next(
       new sfn.Choice(this, "IfPhotosFound")
-        .when(sfn.Condition.isNotNull("$.image.url"), uploadPhotosTask)
+        .when(sfn.Condition.isNotNull("$.images"), uploadPhotosTask)
         .otherwise(new sfn.Pass(this, "NoImages"))
     );
 
