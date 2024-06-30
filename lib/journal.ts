@@ -52,7 +52,7 @@ export class JournalStack extends cdk.Stack {
 
     const findAndUploadPhotos = checkPhotosTask.next(
       new sfn.Choice(this, "IfPhotosFound")
-        .when(sfn.Condition.isNotNull("$.images"), uploadPhotosTask)
+        .when(sfn.Condition.isNotNull("$.images.images"), uploadPhotosTask)
         .otherwise(new sfn.Pass(this, "NoImages"))
     );
 

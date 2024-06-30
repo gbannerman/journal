@@ -37,7 +37,7 @@ export class UploadPhotos extends Construct {
       code: new lambda.AssetCode(
         path.join(__dirname, "../lambda/uploadPhotos")
       ),
-      timeout: cdk.Duration.seconds(5),
+      timeout: cdk.Duration.seconds(8),
       environment: {
         PHOTOS_BUCKET: this.bucket.bucketName,
       },
