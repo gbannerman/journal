@@ -12,7 +12,7 @@ export class CheckPhotos extends Construct {
     super(scope, id);
 
     this.fn = new lambda.NodejsFunction(this, "checkPhotos", {
-      runtime: Runtime.NODEJS_18_X,
+      runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/checkPhotos/index.js"),
       timeout: cdk.Duration.seconds(10),
