@@ -60,7 +60,7 @@ export class JournalStack extends cdk.Stack {
       itemsPath: "$.entries",
       resultPath: "$.entries",
     })
-      .iterator(findAndUploadPhotos)
+      .itemProcessor(findAndUploadPhotos)
       .next(new sfn.Pass(this, "CombinePhotoArray"))
       .next(sendEmailTask);
 
