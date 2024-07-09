@@ -1,6 +1,7 @@
 const { DateTime } = require("luxon");
 const { getAccessToken } = require("./auth");
-const { searchPhotos } = require("./photos");
+const { searchGooglePhotos } = require("./google");
+const { searchImmichPhotos } = require("./immich");
 
 exports.handler = async (event) => {
   const { date: dateString } = event;
@@ -11,7 +12,12 @@ exports.handler = async (event) => {
 
   console.log(date);
 
-  const photos = await searchPhotos(accessToken, date);
+  const googlePhotos = searchGooglePhotos(accessToken, date);
+  const immichPhotos = searchImmichPhotos(date);
+
+  const photoResults = await Promise.all([googlePhotos, immichPhotos]);
+
+  const photos = photoResults.flat();
 
   console.log(photos);
 
@@ -23,16 +29,14 @@ exports.handler = async (event) => {
 
   shuffleArray(photos);
 
-  const images = photos.slice(0, 3).map((x, i) => {
-    const [_filename, extension] = x.filename.split(".");
-    const updatedFilename = `${date.toFormat("yyyy-MM-dd")}/${
-      i + 1
-    }.${extension}`;
-    return {
-      url: `${x.baseUrl}=w1024-h512-d`,
-      filename: updatedFilename,
-      contentType: x.mimeType,
-    };
+  const images = photos.slice(0, 5).map((x, i) => {
+    const filename = `${date.toFormat("yyyy-MM-dd")}/${i + 1}`;
+    switch (x.source) {
+      case "GOOGLE":
+        return mapGooglePhotosImage(x, filename);
+      case "IMMICH":
+        return mapImmichImage(x, filename);
+    }
   });
 
   console.log(images);
@@ -45,4 +49,26 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
+
+function mapGooglePhotosImage(image, filename) {
+  const [_filename, extension] = image.filename.split(".");
+  const updatedFilename = `${filename}.${extension}`;
+  return {
+    url: `${image.baseUrl}=w1024-h512-d`,
+    filename: updatedFilename,
+    contentType: image.mimeType,
+    source: "GOOGLE",
+  };
+}
+
+function mapImmichImage(image, filename) {
+  const [_filename, extension] = image.originalFileName.split(".");
+  const updatedFilename = `${filename}.${extension}`;
+  return {
+    id: image.id,
+    filename: updatedFilename,
+    contentType: image.originalMimeType,
+    source: "IMMICH",
+  };
 }

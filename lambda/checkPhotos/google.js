@@ -1,6 +1,6 @@
 const { default: axios } = require("axios");
 
-const searchPhotos = async (accessToken, date) => {
+const searchGooglePhotos = async (accessToken, date) => {
   const { day, month, year } = date;
 
   const { data } = await axios.post(
@@ -39,9 +39,11 @@ const searchPhotos = async (accessToken, date) => {
     }
   );
 
-  return data.mediaItems || [];
+  return data.mediaItems
+    ? data.mediaItems.map((i) => ({ ...i, source: "GOOGLE" }))
+    : [];
 };
 
 module.exports = {
-  searchPhotos,
+  searchGooglePhotos,
 };

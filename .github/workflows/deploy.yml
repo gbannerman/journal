@@ -34,3 +34,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-north-1
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          IMMICH_BASE_URL: ${{ secrets.IMMICH_BASE_URL }}
+          IMMICH_API_KEY: ${{ secrets.IMMICH_API_KEY }}
+          IMMICH_BASIC_AUTH_USER: ${{ secrets.IMMICH_BASIC_AUTH_USER }}
+          IMMICH_BASIC_AUTH_PASSWORD: ${{ secrets.IMMICH_BASIC_AUTH_PASSWORD }}

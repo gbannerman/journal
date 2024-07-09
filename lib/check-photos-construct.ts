@@ -11,11 +11,28 @@ export class CheckPhotos extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
+    if (
+      !process.env.GOOGLE_CLIENT_SECRET ||
+      !process.env.GOOGLE_CLIENT_ID ||
+      !process.env.GOOGLE_REFRESH_TOKEN
+    ) {
+      throw new Error("Required Google environment variable is not set");
+    }
+
+    if (
+      !process.env.IMMICH_BASE_URL ||
+      !process.env.IMMICH_API_KEY ||
+      !process.env.IMMICH_BASIC_AUTH_USER ||
+      !process.env.IMMICH_BASIC_AUTH_PASSWORD
+    ) {
+      throw new Error("Required Immich environment variable is not set");
+    }
+
     this.fn = new lambda.NodejsFunction(this, "checkPhotos", {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/checkPhotos/index.js"),
-      timeout: cdk.Duration.seconds(10),
+      timeout: cdk.Duration.seconds(15),
       bundling: {
         nodeModules: ["axios", "luxon"],
       },
@@ -24,11 +41,13 @@ export class CheckPhotos extends Construct {
         "../lambda/checkPhotos/package-lock.json"
       ),
       environment: {
-        GOOGLE_REFRESH_TOKEN:
-          "1//04rgPr7hlijQxCgYIARAAGAQSNwF-L9Irnto1GWANksHaI890UY6iOPLgiWcL16IgMcyRPlOxLVFlZMT7tkLbTs3sLA9mIY36PWE",
-        GOOGLE_CLIENT_ID:
-          "915865441780-4bapvpvl6h7q7tgbd6ij3km7mami18tq.apps.googleusercontent.com",
-        GOOGLE_CLIENT_SECRET: "2-jt4Ut3EgHl0T6Ds_ecEIov",
+        GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+        IMMICH_BASE_URL: process.env.IMMICH_BASE_URL,
+        IMMICH_API_KEY: process.env.IMMICH_API_KEY,
+        IMMICH_BASIC_AUTH_USER: process.env.IMMICH_BASIC_AUTH_USER,
+        IMMICH_BASIC_AUTH_PASSWORD: process.env.IMMICH_BASIC_AUTH_PASSWORD,
       },
     });
 
