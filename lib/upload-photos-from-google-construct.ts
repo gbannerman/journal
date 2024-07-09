@@ -31,7 +31,7 @@ export class UploadPhotosFromGoogle extends Construct {
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
     });
 
-    this.fn = new lambda.Function(this, "uploadPhotos", {
+    this.fn = new lambda.Function(this, "uploadPhotosFromGoogle", {
       runtime: lambda.Runtime.PYTHON_3_11,
       handler: "lambda_function.lambda_handler",
       code: new lambda.AssetCode(

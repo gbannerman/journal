@@ -28,11 +28,11 @@ const buildEmailBody = (entries, bucketUrl) => {
   summaryUrl.pathname = "/meta/summary.html";
 
   const buildEntryImages = (entry) => {
-    if (!entry.images?.urls || !entry.images?.urls?.length) {
+    if (!entry.images?.length) {
       return "";
     }
 
-    return entry.images.urls
+    return entry.images
       .map(
         (url) =>
           `<tr><td class="article-content" style="padding: 0 0 20px 30px; text-align: center;"><img style="width: 100%;" src="${url}"/></td></tr>`

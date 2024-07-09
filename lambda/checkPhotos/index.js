@@ -23,7 +23,7 @@ exports.handler = async (event) => {
 
   if (!photos.length) {
     return {
-      images: null,
+      images: [],
     };
   }
 
@@ -53,7 +53,7 @@ function shuffleArray(array) {
 
 function mapGooglePhotosImage(image, filename) {
   const [_filename, extension] = image.filename.split(".");
-  const updatedFilename = `${filename}.${extension}`;
+  const updatedFilename = `${filename}.${extension.toLowerCase()}`;
   return {
     url: `${image.baseUrl}=w1024-h512-d`,
     filename: updatedFilename,
@@ -64,7 +64,7 @@ function mapGooglePhotosImage(image, filename) {
 
 function mapImmichImage(image, filename) {
   const [_filename, extension] = image.originalFileName.split(".");
-  const updatedFilename = `${filename}.${extension}`;
+  const updatedFilename = `${filename}.${extension.toLowerCase()}`;
   return {
     id: image.id,
     filename: updatedFilename,

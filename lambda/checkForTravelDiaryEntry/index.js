@@ -12,11 +12,16 @@ exports.handler = async (event) => {
 
   const formattedDate = day.toFormat("d MMMM");
 
-  const formattedEntries = (entries ?? []).map((x) => ({
-    ...x,
-    date: `${x.year}-${x.day}`,
-    yearsAgo: parseInt(day.toFormat("yyyy")) - x.year,
-  }));
+  const formattedEntries = (entries ?? []).map((x) => {
+    const isoDateString = `${x.year}-${x.day}`;
+    return {
+      ...x,
+      date: isoDateString,
+      yearsAgo: Math.floor(
+        Math.abs(DateTime.fromISO(isoDateString).diffNow("years").years)
+      ),
+    };
+  });
 
   return {
     formattedDate,

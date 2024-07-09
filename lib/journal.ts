@@ -8,6 +8,7 @@ import { CheckDiary } from "./check-diary-construct";
 import { CheckPhotos } from "./check-photos-construct";
 import { UploadPhotosFromGoogle } from "./upload-photos-from-google-construct";
 import { SendEmail } from "./send-email-construct";
+import { UploadPhotosFromImmich } from "./upload-photos-from-immich-construct";
 
 export class JournalStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -20,6 +21,14 @@ export class JournalStack extends cdk.Stack {
     const uploadPhotosFromGoogle = new UploadPhotosFromGoogle(
       this,
       "UploadPhotosFromGoogle"
+    );
+
+    const uploadPhotosFromImmich = new UploadPhotosFromImmich(
+      this,
+      "UploadPhotosFromImmich",
+      {
+        bucket: uploadPhotosFromGoogle.bucket,
+      }
     );
 
     const sendEmail = new SendEmail(this, "SendEmail", {
@@ -48,6 +57,15 @@ export class JournalStack extends cdk.Stack {
       }
     );
 
+    const uploadImmichImagesTask = new tasks.LambdaInvoke(
+      this,
+      "UploadImmichImagesTask",
+      {
+        lambdaFunction: uploadPhotosFromImmich.fn,
+        outputPath: "$.Payload.urls",
+      }
+    );
+
     const sendEmailTask = new tasks.LambdaInvoke(this, "SendEmailTask", {
       lambdaFunction: sendEmail.fn,
       outputPath: "$.Payload",
@@ -65,23 +83,34 @@ export class JournalStack extends cdk.Stack {
       outputPath: "$.immichImages",
     });
 
-    const copyImagesToS3 = checkPhotosTask.next(
-      new sfn.Parallel(this, "CopyImagesToS3", {
-        resultPath: "$.images",
-        resultSelector: {
-          "images.$": "$[*][*]",
-        },
-      })
-        .branch(filterToGooglePhotos.next(uploadGoogleImagesTask))
-        .branch(filterToImmichPhotos)
-    );
+    const copyImagesToS3 = checkPhotosTask
+      .next(
+        new sfn.Parallel(this, "CopyImagesToS3", {
+          resultSelector: {
+            "images.$": "$[*][*]",
+          },
+          resultPath: "$.images",
+        })
+          .branch(filterToGooglePhotos.next(uploadGoogleImagesTask))
+          .branch(filterToImmichPhotos.next(uploadImmichImagesTask))
+      )
+      .next(
+        new sfn.Pass(this, "FlattenEntry", {
+          parameters: {
+            "content.$": "$.content",
+            "images.$": "$.images.images",
+            "yearsAgo.$": "$.yearsAgo",
+            "tripName.$": "$.tripName",
+            "country.$": "$.country",
+          },
+        })
+      );
 
     const sendEmailForEntries = new sfn.Map(this, "MapEntries", {
       itemsPath: "$.entries",
       resultPath: "$.entries",
     })
       .itemProcessor(copyImagesToS3)
-      .next(new sfn.Pass(this, "CombineImagesFromSources"))
       .next(sendEmailTask);
 
     const lambdaChain = checkDiaryTask.next(
