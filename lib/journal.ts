@@ -119,7 +119,7 @@ export class JournalStack extends cdk.Stack {
           sfn.Condition.booleanEquals("$.entriesFound", true),
           sendEmailForEntries
         )
-        .otherwise(new sfn.Pass(this, "NoEntries"))
+        .otherwise(new sfn.Succeed(this, "NoEntries"))
     );
 
     const stateMachine = new sfn.StateMachine(this, "JournalStateMachine", {
