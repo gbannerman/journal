@@ -9,7 +9,7 @@ def lambda_handler(event, context):
     s3 = boto3.client("s3")
     http = urllib3.PoolManager()
 
-    images = event["images"]
+    images = event
 
     image_urls = []
 

@@ -36,32 +36,49 @@ export class JournalStack extends cdk.Stack {
       },
     });
 
-    const uploadPhotosTask = new tasks.LambdaInvoke(this, "UploadPhotosTask", {
-      lambdaFunction: uploadPhotos.fn,
-      inputPath: "$.images",
-      resultPath: "$.images",
-      resultSelector: {
-        "urls.$": "$.Payload.urls",
-      },
-    });
+    const uploadGoogleImagesTask = new tasks.LambdaInvoke(
+      this,
+      "UploadPhotosTask",
+      {
+        lambdaFunction: uploadPhotos.fn,
+        outputPath: "$.Payload.urls",
+      }
+    );
 
     const sendEmailTask = new tasks.LambdaInvoke(this, "SendEmailTask", {
       lambdaFunction: sendEmail.fn,
       outputPath: "$.Payload",
     });
 
-    const findAndUploadPhotos = checkPhotosTask.next(
-      new sfn.Choice(this, "IfPhotosFound")
-        .when(sfn.Condition.isNotNull("$.images.images"), uploadPhotosTask)
-        .otherwise(new sfn.Pass(this, "NoImages"))
+    const filterToGooglePhotos = new sfn.Pass(this, "FilterToGooglePhotos", {
+      inputPath: "$.images.images[?(@.source=='GOOGLE')]",
+      resultPath: "$.googleImages",
+      outputPath: "$.googleImages",
+    });
+
+    const filterToImmichPhotos = new sfn.Pass(this, "FilterToImmichPhotos", {
+      inputPath: "$.images.images[?(@.source=='IMMICH')]",
+      resultPath: "$.immichImages",
+      outputPath: "$.immichImages",
+    });
+
+    const copyImagesToS3 = checkPhotosTask.next(
+      new sfn.Parallel(this, "CopyImagesToS3", {
+        resultPath: "$.images",
+        resultSelector: {
+          "images.$": "$[*][*]",
+        },
+      })
+        .branch(filterToGooglePhotos.next(uploadGoogleImagesTask))
+        .branch(filterToImmichPhotos)
     );
 
     const sendEmailForEntries = new sfn.Map(this, "MapEntries", {
       itemsPath: "$.entries",
       resultPath: "$.entries",
     })
-      .itemProcessor(findAndUploadPhotos)
-      .next(new sfn.Pass(this, "CombinePhotoArray"))
+      .itemProcessor(copyImagesToS3)
+      .next(new sfn.Pass(this, "CombineImagesFromSources"))
       .next(sendEmailTask);
 
     const lambdaChain = checkDiaryTask.next(
