@@ -5,7 +5,7 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 
-export class UploadPhotos extends Construct {
+export class UploadPhotosFromGoogle extends Construct {
   fn: lambda.Function;
   bucket: s3.Bucket;
 
@@ -35,7 +35,7 @@ export class UploadPhotos extends Construct {
       runtime: lambda.Runtime.PYTHON_3_11,
       handler: "lambda_function.lambda_handler",
       code: new lambda.AssetCode(
-        path.join(__dirname, "../lambda/uploadPhotos")
+        path.join(__dirname, "../lambda/uploadPhotosFromGoogle")
       ),
       timeout: cdk.Duration.seconds(8),
       environment: {

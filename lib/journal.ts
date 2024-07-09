@@ -6,7 +6,7 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import { CheckDiary } from "./check-diary-construct";
 import { CheckPhotos } from "./check-photos-construct";
-import { UploadPhotos } from "./upload-photos-construct";
+import { UploadPhotosFromGoogle } from "./upload-photos-from-google-construct";
 import { SendEmail } from "./send-email-construct";
 
 export class JournalStack extends cdk.Stack {
@@ -17,10 +17,13 @@ export class JournalStack extends cdk.Stack {
 
     const checkPhotos = new CheckPhotos(this, "CheckPhotos");
 
-    const uploadPhotos = new UploadPhotos(this, "UploadPhotos");
+    const uploadPhotosFromGoogle = new UploadPhotosFromGoogle(
+      this,
+      "UploadPhotosFromGoogle"
+    );
 
     const sendEmail = new SendEmail(this, "SendEmail", {
-      bucketDomainName: uploadPhotos.bucket.bucketRegionalDomainName,
+      bucketDomainName: uploadPhotosFromGoogle.bucket.bucketRegionalDomainName,
     });
 
     const checkDiaryTask = new tasks.LambdaInvoke(this, "CheckDiaryTask", {
@@ -38,9 +41,9 @@ export class JournalStack extends cdk.Stack {
 
     const uploadGoogleImagesTask = new tasks.LambdaInvoke(
       this,
-      "UploadPhotosTask",
+      "UploadGoogleImagesTask",
       {
-        lambdaFunction: uploadPhotos.fn,
+        lambdaFunction: uploadPhotosFromGoogle.fn,
         outputPath: "$.Payload.urls",
       }
     );
@@ -96,7 +99,7 @@ export class JournalStack extends cdk.Stack {
 
     checkDiary.fn.grantInvoke(stateMachine.role);
     checkPhotos.fn.grantInvoke(stateMachine.role);
-    uploadPhotos.fn.grantInvoke(stateMachine.role);
+    uploadPhotosFromGoogle.fn.grantInvoke(stateMachine.role);
     sendEmail.fn.grantInvoke(stateMachine.role);
 
     const eventRule = new events.Rule(this, "dailyTravelDiaryCheck", {
