@@ -39,6 +39,10 @@ exports.handler = async (event) => {
     }
   });
 
+  images.sort((a, b) =>
+    a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0
+  );
+
   console.log(images);
 
   return { images };
@@ -54,21 +58,26 @@ function shuffleArray(array) {
 function mapGooglePhotosImage(image, filename) {
   const [_filename, extension] = image.filename.split(".");
   const updatedFilename = `${filename}.${extension.toLowerCase()}`;
+  const createdAt = image.mediaMetadata?.creationTime ?? null;
   return {
     url: `${image.baseUrl}=w1024-h512-d`,
     filename: updatedFilename,
     contentType: image.mimeType,
     source: "GOOGLE",
+    createdAt: createdAt ? DateTime.fromISO(createdAt) : null,
   };
 }
 
 function mapImmichImage(image, filename) {
   const [_filename, extension] = image.originalFileName.split(".");
   const updatedFilename = `${filename}.${extension.toLowerCase()}`;
+  const createdAt =
+    image.exifInfo?.dateTimeOriginal ?? image.fileCreatedAt ?? null;
   return {
     id: image.id,
     filename: updatedFilename,
     contentType: image.originalMimeType,
     source: "IMMICH",
+    createdAt: createdAt ? DateTime.fromISO(createdAt) : null,
   };
 }
