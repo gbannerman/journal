@@ -1,21 +1,23 @@
 const { DateTime } = require("luxon");
-const { getAccessToken } = require("./auth");
-const { searchGooglePhotos } = require("./google");
 const { searchImmichPhotos } = require("./immich");
 
 exports.handler = async (event) => {
   const { date: dateString } = event;
 
-  const accessToken = await getAccessToken(process.env.GOOGLE_REFRESH_TOKEN);
-
   const date = DateTime.fromISO(dateString);
 
   console.log(date);
 
-  const googlePhotos = searchGooglePhotos(accessToken, date);
-  const immichPhotos = searchImmichPhotos(date);
+  let photoResults = [];
 
-  const photoResults = await Promise.all([googlePhotos, immichPhotos]);
+  try {
+    photoResults = await searchImmichPhotos(date);
+  } catch (error) {
+    console.error("Error fetching photos:", error);
+    return {
+      images: [],
+    };
+  }
 
   const photos = photoResults.flat();
 
@@ -32,8 +34,6 @@ exports.handler = async (event) => {
   const images = photos.slice(0, 5).map((x, i) => {
     const filename = `${date.toFormat("yyyy-MM-dd")}/${i + 1}`;
     switch (x.source) {
-      case "GOOGLE":
-        return mapGooglePhotosImage(x, filename);
       case "IMMICH":
         return mapImmichImage(x, filename);
     }
@@ -53,19 +53,6 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-}
-
-function mapGooglePhotosImage(image, filename) {
-  const [_filename, extension] = image.filename.split(".");
-  const updatedFilename = `${filename}.${extension.toLowerCase()}`;
-  const createdAt = image.mediaMetadata?.creationTime ?? null;
-  return {
-    url: `${image.baseUrl}=w1024-h512-d`,
-    filename: updatedFilename,
-    contentType: image.mimeType,
-    source: "GOOGLE",
-    createdAt: createdAt ? DateTime.fromISO(createdAt) : null,
-  };
 }
 
 function mapImmichImage(image, filename) {

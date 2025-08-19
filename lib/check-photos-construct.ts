@@ -12,14 +12,6 @@ export class CheckPhotos extends Construct {
     super(scope, id);
 
     if (
-      !process.env.GOOGLE_CLIENT_SECRET ||
-      !process.env.GOOGLE_CLIENT_ID ||
-      !process.env.GOOGLE_REFRESH_TOKEN
-    ) {
-      throw new Error("Required Google environment variable is not set");
-    }
-
-    if (
       !process.env.IMMICH_BASE_URL ||
       !process.env.IMMICH_API_KEY ||
       !process.env.IMMICH_BASIC_AUTH_USER ||
@@ -41,9 +33,6 @@ export class CheckPhotos extends Construct {
         "../lambda/checkPhotos/package-lock.json"
       ),
       environment: {
-        GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
-        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         IMMICH_BASE_URL: process.env.IMMICH_BASE_URL,
         IMMICH_API_KEY: process.env.IMMICH_API_KEY,
         IMMICH_BASIC_AUTH_USER: process.env.IMMICH_BASIC_AUTH_USER,
