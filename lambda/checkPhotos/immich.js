@@ -3,6 +3,8 @@ const { DateTime } = require("luxon");
 
 const IMMICH_BASE_URL = process.env.IMMICH_BASE_URL;
 const IMMICH_API_KEY = process.env.IMMICH_API_KEY;
+const IMMICH_BASIC_AUTH_USER = process.env.IMMICH_BASIC_AUTH_USER;
+const IMMICH_BASIC_AUTH_PASSWORD = process.env.IMMICH_BASIC_AUTH_PASSWORD;
 
 const searchImmichPhotos = async (date) => {
   const { day, month, year } = date;
@@ -14,9 +16,6 @@ const searchImmichPhotos = async (date) => {
     `Searching immich for photos between ${startDate} and ${endDate}`
   );
 
-  console.log(`Using Immich base URL: ${IMMICH_BASE_URL}`);
-  console.log(`Using Immich API Key: ${IMMICH_API_KEY}`);
-
   const { data } = await axios.post(
     `${IMMICH_BASE_URL}/api/search/metadata`,
     {
@@ -26,6 +25,10 @@ const searchImmichPhotos = async (date) => {
     {
       headers: {
         "x-api-key": IMMICH_API_KEY,
+      },
+      auth: {
+        username: IMMICH_BASIC_AUTH_USER,
+        password: IMMICH_BASIC_AUTH_PASSWORD,
       },
     }
   );

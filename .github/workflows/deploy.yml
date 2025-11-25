@@ -39,3 +39,5 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           IMMICH_BASE_URL: ${{ secrets.IMMICH_BASE_URL }}
           IMMICH_API_KEY: ${{ secrets.IMMICH_API_KEY }}
+          IMMICH_BASIC_AUTH_USER: ${{ secrets.IMMICH_BASIC_AUTH_USER }}
+          IMMICH_BASIC_AUTH_PASSWORD: ${{ secrets.IMMICH_BASIC_AUTH_PASSWORD }}
