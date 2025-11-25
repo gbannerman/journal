@@ -33,9 +33,14 @@ const searchImmichPhotos = async (date) => {
     }
   );
 
-  return data && data.length
-    ? data.map((i) => ({ ...i, source: "IMMICH" }))
-    : [];
+  if (!data) {
+    console.log("No data returned from Immich");
+    return [];
+  }
+
+  const { assets } = data;
+
+  return assets.items.map((i) => ({ ...i, source: "IMMICH" }));
 };
 
 module.exports = {
