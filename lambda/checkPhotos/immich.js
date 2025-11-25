@@ -14,6 +14,9 @@ const searchImmichPhotos = async (date) => {
     `Searching immich for photos between ${startDate} and ${endDate}`
   );
 
+  console.log(`Using Immich base URL: ${IMMICH_BASE_URL}`);
+  console.log(`Using Immich API Key: ${IMMICH_API_KEY}`);
+
   const { data } = await axios.post(
     `${IMMICH_BASE_URL}/api/search/metadata`,
     {
