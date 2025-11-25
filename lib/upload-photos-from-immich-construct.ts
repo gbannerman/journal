@@ -11,12 +11,7 @@ export class UploadPhotosFromImmich extends Construct {
   constructor(scope: Construct, id: string, { bucket }: { bucket: s3.Bucket }) {
     super(scope, id);
 
-    if (
-      !process.env.IMMICH_BASE_URL ||
-      !process.env.IMMICH_API_KEY ||
-      !process.env.IMMICH_BASIC_AUTH_USER ||
-      !process.env.IMMICH_BASIC_AUTH_PASSWORD
-    ) {
+    if (!process.env.IMMICH_BASE_URL || !process.env.IMMICH_API_KEY) {
       throw new Error("Required Immich environment variable is not set");
     }
 
@@ -31,8 +26,6 @@ export class UploadPhotosFromImmich extends Construct {
         PHOTOS_BUCKET: bucket.bucketName,
         IMMICH_BASE_URL: process.env.IMMICH_BASE_URL,
         IMMICH_API_KEY: process.env.IMMICH_API_KEY,
-        IMMICH_BASIC_AUTH_USER: process.env.IMMICH_BASIC_AUTH_USER,
-        IMMICH_BASIC_AUTH_PASSWORD: process.env.IMMICH_BASIC_AUTH_PASSWORD,
       },
     });
 
