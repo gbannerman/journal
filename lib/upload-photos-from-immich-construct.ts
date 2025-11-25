@@ -21,7 +21,7 @@ export class UploadPhotosFromImmich extends Construct {
     }
 
     this.fn = new lambda.Function(this, "uploadPhotosFromImmich", {
-      runtime: lambda.Runtime.PYTHON_3_11,
+      runtime: lambda.Runtime.PYTHON_3_14,
       handler: "lambda_function.lambda_handler",
       code: new lambda.AssetCode(
         path.join(__dirname, "../lambda/uploadPhotosFromImmich")
