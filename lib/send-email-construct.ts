@@ -20,7 +20,7 @@ export class SendEmail extends Construct {
     super(scope, id);
 
     this.fn = new lambda.NodejsFunction(this, "sendEmail", {
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_LATEST,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/sendOnThisDayEmail/index.js"),
       reservedConcurrentExecutions: 1,

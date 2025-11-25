@@ -19,7 +19,7 @@ export class CheckDiary extends Construct {
     });
 
     this.fn = new lambda.NodejsFunction(this, "checkForTravelDiaryEntry", {
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_LATEST,
       handler: "handler",
       entry: path.join(
         __dirname,
